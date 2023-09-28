@@ -24,16 +24,16 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class MainViewModel extends AndroidViewModel {
-    private final MainRepository repository;
+    private final MutableLiveData<List<Earthquake>> eqList = new MutableLiveData<>();
     public MainViewModel(@NonNull Application application){
         super(application);
         EqDatabase database =EqDatabase.getDatabase(application);
         repository = new MainRepository(database);
     }
-
     public LiveData<List<Earthquake>> getEqList(){
         return repository.getEqList();
     }
+    private final MainRepository repository;
 
     public void downloadEarthquakes(){
         repository.downloadAndSaveEarthquakes();

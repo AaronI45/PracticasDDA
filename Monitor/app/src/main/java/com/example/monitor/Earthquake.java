@@ -1,5 +1,8 @@
 package com.example.monitor;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import androidx.annotation.NonNull;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
@@ -7,9 +10,10 @@ import androidx.room.PrimaryKey;
 import java.util.Objects;
 
 @Entity(tableName = "earthquakes")
-public class Earthquake {
-@PrimaryKey
-@NonNull
+public class Earthquake implements Parcelable {
+
+    @PrimaryKey
+    @NonNull
     private String id;
     private String place;
     private double magnitude;
@@ -25,6 +29,27 @@ public class Earthquake {
         this.latitude = latitude;
         this.longitude = longitude;
     }
+
+    protected Earthquake(@NonNull Parcel in) {
+        id = in.readString();
+        place = in.readString();
+        magnitude = in.readDouble();
+        time = in.readLong();
+        latitude = in.readDouble();
+        longitude = in.readDouble();
+    }
+
+    public static final Creator<Earthquake> CREATOR = new Creator<Earthquake>() {
+        @Override
+        public Earthquake createFromParcel(Parcel in) {
+            return new Earthquake(in);
+        }
+
+        @Override
+        public Earthquake[] newArray(int size) {
+            return new Earthquake[size];
+        }
+    };
 
     public String getId() {
         return id;
@@ -61,5 +86,20 @@ public class Earthquake {
     @Override
     public int hashCode() {
         return Objects.hash(id, place, magnitude, time, latitude, longitude);
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(@NonNull Parcel dest, int flags) {
+        dest.writeString(id);
+        dest.writeString(place);
+        dest.writeDouble(magnitude);
+        dest.writeLong(time);
+        dest.writeDouble(longitude);
+        dest.writeDouble(latitude);
     }
 }
