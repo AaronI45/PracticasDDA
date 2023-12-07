@@ -4,7 +4,10 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-
+        <variable
+                name = "rated_book"
+                type="com.example.books.Book"
+        />
     </data>
 
     <ScrollView
