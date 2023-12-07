@@ -44,6 +44,7 @@ public class MainRepository {
 
     private List<Earthquake> getEarthquakesWithMoshi(EarthquakeJSONResponse body) {
         ArrayList<Earthquake> eqList = new ArrayList<>();
+
         List<Feature> features = body.getFeatures();
         for (Feature feature: features) {
             String id = feature.getId();

@@ -45,15 +45,14 @@ public class DetailActivity extends AppCompatActivity implements OnMapReadyCallb
         Log.d("SDI","Longitude: "+ter.getLongitude());
         Log.d("SDI","Latitude: "+ter.getLatitude());
 
-
+        Date date = new Date(ter.getTime());
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+        String formattedDate = sdf.format(date);
 
         binding.setTer(ter);
         binding.setMag(String.format(String.valueOf(R.string.magnitude_format),ter.getMagnitude()));
         binding.setTime(formattedDate);
 
-        Date date = new Date(ter.getTime());
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
-        String formattedDate = sdf.format(date);
 
         mMapView = binding.mapView;
         mMapView.onCreate(savedInstanceState);
