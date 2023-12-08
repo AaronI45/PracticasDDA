@@ -10,6 +10,8 @@ import androidx.lifecycle.ViewModel;
 
 import com.example.monitor.Earthquake;
 import com.example.monitor.api.EqApiClient;
+import com.example.monitor.api.RequestStatus;
+import com.example.monitor.api.StatusWithDescription;
 import com.example.monitor.database.EqDatabase;
 
 import org.json.JSONArray;
@@ -24,6 +26,8 @@ import retrofit2.Callback;
 import retrofit2.Response;
 
 public class MainViewModel extends AndroidViewModel {
+    private MutableLiveData<StatusWithDescription> statusMutableLiveData = new
+            MutableLiveData<>();
     private final MutableLiveData<List<Earthquake>> eqList = new MutableLiveData<>();
     public MainViewModel(@NonNull Application application){
         super(application);
@@ -36,6 +40,20 @@ public class MainViewModel extends AndroidViewModel {
     private final MainRepository repository;
 
     public void downloadEarthquakes(){
-        repository.downloadAndSaveEarthquakes();
+        statusMutableLiveData.setValue(new StatusWithDescription(RequestStatus.LOADING, ""));
+        repository.downloadAndSaveEarthquakes(new MainRepository.DownloadStatusListener() {
+            @Override
+            public void downloadSuccess() {
+                statusMutableLiveData.setValue(new StatusWithDescription(RequestStatus.DONE, ""));
+            }
+
+            @Override
+            public void downloadError(String message) {
+                statusMutableLiveData.setValue(new StatusWithDescription(RequestStatus.ERROR, message));
+            }
+        });
+    }
+    public LiveData<StatusWithDescription> getStatusMutableLiveData(){
+        return statusMutableLiveData;
     }
 }

@@ -1,5 +1,6 @@
 package com.example.monitor.main;
 
+import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
@@ -9,6 +10,7 @@ import androidx.recyclerview.widget.ListAdapter;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.monitor.Earthquake;
+import com.example.monitor.R;
 import com.example.monitor.databinding.EqListItemBinding;
 
 public class EqAdapter extends ListAdapter<Earthquake, EqAdapter.EqViewHolder> {
@@ -21,6 +23,7 @@ public class EqAdapter extends ListAdapter<Earthquake, EqAdapter.EqViewHolder> {
                     // User properties may have changed if reloaded from the DB, but ID is fixed
                     return oldEq.getId().equals(newEq.getId());
                 }
+
                 @Override
                 public boolean areContentsTheSame(
                         @NonNull Earthquake oldEq, @NonNull Earthquake newEq) {
@@ -30,9 +33,11 @@ public class EqAdapter extends ListAdapter<Earthquake, EqAdapter.EqViewHolder> {
                 }
             };
 
+    Context context;
 
-    protected EqAdapter() {
+    protected EqAdapter(Context context) {
         super(DIFF_CALLBACK);
+        this.context = context;
     }
 
     private OnItemClickListener onItemClickListener;
@@ -58,7 +63,7 @@ public class EqAdapter extends ListAdapter<Earthquake, EqAdapter.EqViewHolder> {
         holder.bind(earthquake);
     }
 
-    class EqViewHolder extends RecyclerView.ViewHolder{
+    class EqViewHolder extends RecyclerView.ViewHolder {
 
         private final EqListItemBinding binding;
 
@@ -68,10 +73,10 @@ public class EqAdapter extends ListAdapter<Earthquake, EqAdapter.EqViewHolder> {
         }
 
         public void bind(Earthquake earthquake) {
-            binding.magnitudeText.setText(String.valueOf(earthquake.getMagnitude()));
+            binding.magnitudeText.setText(context.getString(R.string.magnitude_format,earthquake.getMagnitude()));
             binding.placeText.setText(earthquake.getPlace());
 
-            binding.getRoot().setOnClickListener( v -> {
+            binding.getRoot().setOnClickListener(v -> {
                 onItemClickListener.onItemClick(earthquake);
             });
 

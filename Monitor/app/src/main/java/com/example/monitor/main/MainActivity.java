@@ -1,5 +1,6 @@
 package com.example.monitor.main;
 
+import android.view.View;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -10,6 +11,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import com.example.monitor.Earthquake;
+import com.example.monitor.api.RequestStatus;
 import com.example.monitor.databinding.ActivityMainBinding;
 import com.example.monitor.details.DetailActivity;
 
@@ -27,13 +29,24 @@ public class MainActivity extends AppCompatActivity {
 
         binding.eqRecycler.setLayoutManager(new LinearLayoutManager(this));
 
-        EqAdapter adapter = new EqAdapter();
+        EqAdapter adapter = new EqAdapter(this);
         /*adapter.setOnItemClickListener(earthquake ->
                 Toast.makeText(MainActivity.this,
                         earthquake.getPlace(),
                         Toast.LENGTH_SHORT).show());*/
         adapter.setOnItemClickListener(earthquake -> openDetailActivity(earthquake));
         binding.eqRecycler.setAdapter(adapter);
+
+        viewModel.getStatusMutableLiveData().observe(this,status->{
+            if(status.getStatus() == RequestStatus.LOADING){
+                binding.loadingWheel.setVisibility(View.VISIBLE);
+            }else{
+                binding.loadingWheel.setVisibility(View.GONE);
+            }
+            if(status.getStatus() == RequestStatus.ERROR){
+                Toast.makeText(this,"Check Internet Connection", Toast.LENGTH_SHORT).show();
+            }
+        });
 
         viewModel.downloadEarthquakes();
 

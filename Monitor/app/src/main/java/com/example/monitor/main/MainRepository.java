@@ -17,6 +17,10 @@ import retrofit2.Response;
 
 
 public class MainRepository {
+    public interface DownloadStatusListener{
+        void downloadSuccess();
+        void downloadError(String message);
+    }
     private final EqDatabase database;
     public MainRepository(EqDatabase database) {
         this.database = database;
@@ -25,7 +29,7 @@ public class MainRepository {
         return database.eqDAO().getEarthquakes();
     }
 
-    public void downloadAndSaveEarthquakes() {
+    public void downloadAndSaveEarthquakes(DownloadStatusListener downloadStatusListener) {
         EqApiClient.EqService service = EqApiClient.getInstance().getService();
         service.getEarthquakes().enqueue(new Callback<EarthquakeJSONResponse>(){
             @Override
@@ -35,9 +39,12 @@ public class MainRepository {
                 EqDatabase.databaseWriteExecutor.execute(() -> {
                     database.eqDAO().insertAll(earthquakeList);
                 });
+
+                downloadStatusListener.downloadSuccess();
             }
             @Override
             public void onFailure(Call<EarthquakeJSONResponse> call, Throwable t) {
+                downloadStatusListener.downloadError(t.getMessage());
             }
         });
     }
